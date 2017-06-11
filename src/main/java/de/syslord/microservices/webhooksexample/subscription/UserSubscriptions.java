@@ -1,12 +1,12 @@
 package de.syslord.microservices.webhooksexample.subscription;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableList;
 
 import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
 
@@ -14,38 +14,40 @@ import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
 public class UserSubscriptions {
 
 	@JsonProperty("subscriptions")
-	private List<Subscription> subscriptions = new ArrayList<>();
+	private Map<String, Subscription> idSubscriptions = new HashMap<>();
 
 	public UserSubscriptions() {
 		// deserialization constructor
 	}
 
-	public UserSubscriptions(List<Subscription> subscriptions) {
-		this.subscriptions = subscriptions;
+	private UserSubscriptions(Map<String, Subscription> idSubscriptions) {
+		this.idSubscriptions = idSubscriptions;
 	}
 
 	public static UserSubscriptions createEmpty() {
-		return new UserSubscriptions(Collections.emptyList());
+		return new UserSubscriptions(Collections.emptyMap());
 	}
 
-	public void add(Subscription subscription) throws SubscriptionException {
-		// TODO throw if matches previous
-		subscriptions.add(subscription);
+	public synchronized void add(Subscription subscription) throws SubscriptionException {
+		if (idSubscriptions.containsKey(subscription.getId())) {
+			throw new SubscriptionException("id already used");
+		}
+
+		idSubscriptions.put(subscription.getId(), subscription);
+	}
+
+	public synchronized void delete(String id) {
+		idSubscriptions.remove(id);
 	}
 
 	public List<Subscription> getSubscriptions() {
-		return ImmutableList.copyOf(subscriptions);
+		return idSubscriptions.values().stream().collect(Collectors.toList());
 	}
 
 	public List<Subscription> getSubscriptions(String eventname) {
-		return subscriptions.stream()
+		return idSubscriptions.values().stream()
 			.filter(s -> s.matchesEvent(eventname))
 			.collect(Collectors.toList());
-	}
-
-	public void delete(String id) throws SubscriptionException {
-		// TODO Auto-generated method stub
-		// TODO exception
 	}
 
 }

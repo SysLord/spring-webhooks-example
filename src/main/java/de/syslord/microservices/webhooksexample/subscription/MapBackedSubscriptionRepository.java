@@ -19,15 +19,26 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 
 	private Map<String, UserSubscriptions> userSubscriptions = new HashMap<>();
 
-	public void add(String name, Subscription subscription) throws SubscriptionException {
-		if (!userSubscriptions.containsKey(name)) {
-			userSubscriptions.put(name, new UserSubscriptions());
+	@Override
+	public void add(String username, Subscription subscription) throws SubscriptionException {
+		if (!userSubscriptions.containsKey(username)) {
+			userSubscriptions.put(username, new UserSubscriptions());
 		}
 
-		UserSubscriptions subscriptions = userSubscriptions.get(name);
+		UserSubscriptions subscriptions = userSubscriptions.get(username);
 		subscriptions.add(subscription);
 	}
 
+	@Override
+	public void delete(String username, String id) {
+		if (!userSubscriptions.containsKey(username)) {
+			return;
+		}
+		UserSubscriptions subscriptions = userSubscriptions.get(username);
+		subscriptions.delete(id);
+	}
+
+	@Override
 	public UserSubscriptions getSubscriptionsForUser(String username) {
 		if (userSubscriptions.containsKey(username)) {
 			return userSubscriptions.get(username);
@@ -35,7 +46,7 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 		return UserSubscriptions.createEmpty();
 	}
 
-	// TODO here?
+	@Override
 	public void fireEvent(SubscriptionEvent subscriptionEvent) {
 		List<Subscription> callList = getSubscriptionsForEvent(subscriptionEvent.getName());
 

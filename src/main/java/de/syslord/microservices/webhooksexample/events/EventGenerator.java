@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import de.syslord.microservices.webhooksexample.subscription.MapBackedSubscriptionRepository;
+import de.syslord.microservices.webhooksexample.subscription.SubscriptionRepository;
 
 @Component
 public class EventGenerator {
 
 	// TODO use interface
 	@Autowired
-	private MapBackedSubscriptionRepository subscriptionRepo;
+	private SubscriptionRepository subscriptionRepo;
 
 	@Scheduled(fixedDelay = 5000)
 	public void fireEvent() {

@@ -8,12 +8,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import de.syslord.microservices.webhooksexample.rest.ExampleServiceToBeCalled;
 
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	// Use basic auth for any request
+	// Use basic auth for any request except unsecured mappings
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http

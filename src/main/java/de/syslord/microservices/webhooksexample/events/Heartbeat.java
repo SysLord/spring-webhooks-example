@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Heartbeat extends SubscriptionEvent {
 
-	public static final String EVENT_NAME = "Heartbeat";
+	public static final String EVENT_NAME = "HEARTBEAT";
 
 	private Heartbeat() {
 	}

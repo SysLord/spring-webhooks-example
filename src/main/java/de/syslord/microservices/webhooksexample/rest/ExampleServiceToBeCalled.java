@@ -22,7 +22,6 @@ public class ExampleServiceToBeCalled {
 
 	private List<String> callingList = Collections.synchronizedList(new ArrayList<>());
 
-	// TODO how to match Event parameters to these parameters and make all that transparent to the user?
 	@RequestMapping(
 			path = CALLME1_ENDPOINT,
 			name = CALLME1_ENDPOINT,
@@ -33,7 +32,7 @@ public class ExampleServiceToBeCalled {
 
 		String message = String.format("%s %s", LocalDateTime.now(), param);
 		callingList.add(message);
-		// TODO
+
 		System.out.println(message);
 
 		return ResponseEntity.ok("OK");

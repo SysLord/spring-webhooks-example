@@ -1,13 +1,13 @@
 package de.syslord.microservices.webhooksexample.events;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
 
 @JsonNoAutodetect
 public abstract class SubscriptionEvent {
 
-	@JsonProperty("placeholderValues")
+	@JsonUnwrapped
 	private EventPlaceholders eventPlaceholder = new EventPlaceholders();
 
 	public EventPlaceholders getPlaceholder() {
