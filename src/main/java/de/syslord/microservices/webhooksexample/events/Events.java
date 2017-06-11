@@ -3,15 +3,25 @@ package de.syslord.microservices.webhooksexample.events;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 
 public class Events {
 
-	public static final Map<String, Supplier<SubscriptionEvent>> eventsExamples = Maps.newHashMap();
+	public static final Map<String, Supplier<SubscriptionEvent>> eventsAndExamples = Maps.newHashMap();
 
 	static {
-		eventsExamples.put("Heartbeat", () -> Heartbeat.create(LocalDateTime.now()));
+		eventsAndExamples.put(Heartbeat.EVENT_NAME, () -> Heartbeat.create(LocalDateTime.now()));
+	}
+
+	public static Map<String, SubscriptionEvent> getExamples() {
+		Map<String, SubscriptionEvent> examples = Events.eventsAndExamples.entrySet().stream()
+			.collect(
+					Collectors.toMap(
+							e -> e.getKey(), e -> e.getValue().get()));
+
+		return examples;
 	}
 
 }

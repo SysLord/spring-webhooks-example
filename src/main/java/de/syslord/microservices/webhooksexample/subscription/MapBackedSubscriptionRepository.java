@@ -28,31 +28,30 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 		subscriptions.add(subscription);
 	}
 
-	public UserSubscriptions getSubscriptions(String name) {
-		if (userSubscriptions.containsKey(name)) {
-			return userSubscriptions.get(name);
+	public UserSubscriptions getSubscriptionsForUser(String username) {
+		if (userSubscriptions.containsKey(username)) {
+			return userSubscriptions.get(username);
 		}
 		return UserSubscriptions.createEmpty();
 	}
 
+	// TODO here?
 	public void fireEvent(SubscriptionEvent subscriptionEvent) {
-		List<Subscription> callList = getSubscriptions(subscriptionEvent.getClass());
+		List<Subscription> callList = getSubscriptionsForEvent(subscriptionEvent.getName());
 
 		// TODO log user and event infos
 
 		callList.stream()
 			.forEach(subscription -> {
-
 				String callAddress = subscriptionEvent.applyPlaceholder(subscription.getRemoteAdress());
 				asyncServiceCaller.enqueue(callAddress);
-
 			});
 	}
 
-	private List<Subscription> getSubscriptions(Class<? extends SubscriptionEvent> clazz) {
+	private List<Subscription> getSubscriptionsForEvent(String eventname) {
 		// TODO by event
 		return userSubscriptions.values().stream()
-			.flatMap(s -> s.getSubscriptions().stream())
+			.flatMap(s -> s.getSubscriptions(eventname).stream())
 			.collect(Collectors.toList());
 	}
 

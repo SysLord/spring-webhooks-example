@@ -1,8 +1,6 @@
 package de.syslord.microservices.webhooksexample.rest;
 
 import java.security.Principal;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +11,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import de.syslord.microservices.webhooksexample.events.Events;
-import de.syslord.microservices.webhooksexample.events.SubscriptionEvent;
 import de.syslord.microservices.webhooksexample.subscription.MapBackedSubscriptionRepository;
 import de.syslord.microservices.webhooksexample.subscription.Subscription;
 import de.syslord.microservices.webhooksexample.subscription.SubscriptionException;
@@ -26,27 +23,48 @@ public class PushNotificationService {
 	private MapBackedSubscriptionRepository subscriptionRepository;
 
 	@Secured({ "ROLE_SUBSCRIBER" })
-	@RequestMapping(
-			path = "/subscribe",
-			name = "/subscribe",
-			method = RequestMethod.POST,
+	@PostMapping(
+			path = "/subscription",
+			name = "/subscription",
 			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public ResponseEntity<UserSubscriptions> subscribe(
+	public ResponseEntity<UserSubscriptions> createSubscribe(
 			@RequestBody Subscription subscription,
 			Principal principal) {
 
-		String name = principal.getName();
+		String username = principal.getName();
 		// TODO C.Helmer 10.06.2017
-		System.out.println("helo" + name);
+		System.out.println("helo" + username);
 
 		try {
-			subscriptionRepository.add(name, subscription);
+			subscriptionRepository.add(username, subscription);
 		} catch (SubscriptionException ex) {
 			// TODO C.Helmer 10.06.2017
 		}
 
-		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptions(name));
+		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
+	}
+
+	@Secured({ "ROLE_SUBSCRIBER" })
+	@DeleteMapping(
+			path = "/subscription/{id}",
+			name = "/subscription/{id}",
+			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<UserSubscriptions> deleteSubscription(
+			@PathVariable String id,
+			Principal principal) {
+
+		String username = principal.getName();
+		UserSubscriptions userSubscriptions = subscriptionRepository.getSubscriptionsForUser(username);
+
+		try {
+			userSubscriptions.delete(id);
+		} catch (SubscriptionException ex) {
+			// TODO C.Helmer 10.06.2017
+		}
+
+		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
 	}
 
 	@GetMapping(
@@ -58,12 +76,7 @@ public class PushNotificationService {
 		// TODO check event auth
 		// httpServletRequest.isUserInRole("")
 
-		Map<String, SubscriptionEvent> x = Events.eventsExamples.entrySet().stream().collect(
-				Collectors.toMap(
-						e -> e.getKey(), e -> e.getValue().get()));
-
-		// TODO keine Ahnung was das gibt
-		return ResponseEntity.ok().body(x);
+		return ResponseEntity.ok().body(Events.getExamples());
 	}
 
 }

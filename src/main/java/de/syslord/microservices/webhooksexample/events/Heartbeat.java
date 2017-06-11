@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class Heartbeat extends SubscriptionEvent {
 
+	public static final String EVENT_NAME = "Heartbeat";
+
 	private Heartbeat() {
 	}
 
@@ -11,6 +13,11 @@ public class Heartbeat extends SubscriptionEvent {
 		Heartbeat heartbeat = new Heartbeat();
 		heartbeat.addPlaceholder("{time}", time.toString());
 		return heartbeat;
+	}
+
+	@Override
+	public String getName() {
+		return EVENT_NAME;
 	}
 
 }

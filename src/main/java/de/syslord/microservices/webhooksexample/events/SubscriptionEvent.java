@@ -22,4 +22,6 @@ public abstract class SubscriptionEvent {
 		return eventPlaceholder.apply(remoteAdress);
 	}
 
+	public abstract String getName();
+
 }

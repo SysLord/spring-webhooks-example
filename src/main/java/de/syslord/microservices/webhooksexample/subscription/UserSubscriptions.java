@@ -3,6 +3,7 @@ package de.syslord.microservices.webhooksexample.subscription;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
@@ -27,13 +28,24 @@ public class UserSubscriptions {
 		return new UserSubscriptions(Collections.emptyList());
 	}
 
-	public void add(Subscription subscription) {
+	public void add(Subscription subscription) throws SubscriptionException {
 		// TODO throw if matches previous
 		subscriptions.add(subscription);
 	}
 
 	public List<Subscription> getSubscriptions() {
 		return ImmutableList.copyOf(subscriptions);
+	}
+
+	public List<Subscription> getSubscriptions(String eventname) {
+		return subscriptions.stream()
+			.filter(s -> s.matchesEvent(eventname))
+			.collect(Collectors.toList());
+	}
+
+	public void delete(String id) throws SubscriptionException {
+		// TODO Auto-generated method stub
+		// TODO exception
 	}
 
 }
