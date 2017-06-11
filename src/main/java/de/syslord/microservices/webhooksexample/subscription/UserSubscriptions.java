@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonNoGetterAutodetect;
 
-@JsonNoAutodetect
+@JsonNoGetterAutodetect
 public class UserSubscriptions {
 
 	@JsonProperty("subscriptions")

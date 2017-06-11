@@ -1,4 +1,4 @@
-package de.syslord.microservices.webhooksexample.security.auth;
+package de.syslord.microservices.webhooksexample.example.security.auth;
 
 public class UserAccount {
 

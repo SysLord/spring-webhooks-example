@@ -1,4 +1,4 @@
-package de.syslord.microservices.webhooksexample.security.auth;
+package de.syslord.microservices.webhooksexample.example.security.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.google.common.annotations.VisibleForTesting;
+
+import de.syslord.microservices.webhooksexample.example.ExampleUserRepository;
 
 @Configuration
 public class SecurityAuthConfig extends GlobalAuthenticationConfigurerAdapter {

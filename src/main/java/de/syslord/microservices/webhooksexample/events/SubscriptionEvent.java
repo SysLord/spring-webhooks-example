@@ -2,9 +2,9 @@ package de.syslord.microservices.webhooksexample.events;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonNoGetterAutodetect;
 
-@JsonNoAutodetect
+@JsonNoGetterAutodetect
 public abstract class SubscriptionEvent {
 
 	@JsonUnwrapped
@@ -18,8 +18,8 @@ public abstract class SubscriptionEvent {
 		eventPlaceholder.add(param, value);
 	}
 
-	public String applyPlaceholder(String remoteAdress) {
-		return eventPlaceholder.apply(remoteAdress);
+	public String applyPlaceholder(String stringWithPlaceholders) {
+		return eventPlaceholder.apply(stringWithPlaceholders);
 	}
 
 	public abstract String getName();

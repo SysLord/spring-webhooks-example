@@ -2,10 +2,10 @@ package de.syslord.microservices.webhooksexample.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonNoGetterAutodetect;
 
-@JsonNoAutodetect
-public class ExampleObject {
+@JsonNoGetterAutodetect
+public class EventExample {
 
 	@JsonProperty("eventname")
 	private String eventname;
@@ -13,7 +13,7 @@ public class ExampleObject {
 	@JsonProperty("exampleValues")
 	private SubscriptionEvent exampleValues;
 
-	public ExampleObject(String eventname, SubscriptionEvent exampleValues) {
+	public EventExample(String eventname, SubscriptionEvent exampleValues) {
 		this.eventname = eventname;
 		this.exampleValues = exampleValues;
 	}

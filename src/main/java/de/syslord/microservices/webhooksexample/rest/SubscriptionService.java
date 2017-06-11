@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import de.syslord.microservices.webhooksexample.events.Events;
@@ -15,7 +16,7 @@ import de.syslord.microservices.webhooksexample.subscription.SubscriptionReposit
 import de.syslord.microservices.webhooksexample.subscription.UserSubscriptions;
 
 @RestController
-public class PushNotificationService {
+public class SubscriptionService {
 
 	@Autowired
 	private SubscriptionRepository subscriptionRepository;
@@ -23,26 +24,19 @@ public class PushNotificationService {
 	@Autowired
 	private Events events;
 
-	// TODO auth
-	@Secured({ "ROLE_SUBSCRIBER" })
-	@PostMapping(
+	@PreAuthorize("hasRole('ROLE_SUBSCRIBER')")
+	@PutMapping(
 			path = "/subscription",
 			name = "/subscription",
+			consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
 			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public ResponseEntity<UserSubscriptions> createSubscribe(
 			@RequestBody Subscription subscription,
-			Principal principal) {
-
-		// SimpleSecurityExpressionRoot security = SimpleSecurityExpressionRoot.getFromPrincipal(principal);
-		// security.hasEvent(subscription.getEvent())
+			Principal principal) throws SubscriptionException {
 
 		String username = principal.getName();
-		try {
-			subscriptionRepository.add(username, subscription);
-		} catch (SubscriptionException ex) {
-			// TODO C.Helmer 10.06.2017
-		}
+		subscriptionRepository.add(username, subscription);
 
 		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
 	}

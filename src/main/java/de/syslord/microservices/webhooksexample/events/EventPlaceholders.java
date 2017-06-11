@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.google.common.collect.Maps;
 
-import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonNoGetterAutodetect;
 
-@JsonNoAutodetect
+@JsonNoGetterAutodetect
 public class EventPlaceholders {
 
 	private Map<String, String> replacements = Maps.newHashMap();
@@ -25,6 +25,10 @@ public class EventPlaceholders {
 	}
 
 	public String apply(String remoteAdress) {
+		if (remoteAdress == null) {
+			return "";
+		}
+
 		String temp = remoteAdress;
 		for (Entry<String, String> patternReplacement : replacements.entrySet()) {
 			String pattern = patternReplacement.getKey();

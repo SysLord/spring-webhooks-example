@@ -13,6 +13,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 		fieldVisibility = Visibility.NONE,
 		getterVisibility = Visibility.NONE,
 		isGetterVisibility = Visibility.NONE)
-public @interface JsonNoAutodetect {
+public @interface JsonNoGetterAutodetect {
 
 }

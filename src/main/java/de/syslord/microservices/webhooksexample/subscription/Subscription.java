@@ -2,14 +2,14 @@ package de.syslord.microservices.webhooksexample.subscription;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import de.syslord.microservices.webhooksexample.utils.JsonNoAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonNoGetterAutodetect;
+import de.syslord.microservices.webhooksexample.utils.JsonPasswordSerializer;
 
-@JsonNoAutodetect
+@JsonNoGetterAutodetect
 @JsonPropertyOrder(value = { "id", "event", "remoteAddress" })
 public class Subscription {
-
-	// TODO ...
 
 	@JsonProperty("id")
 	private String id;
@@ -24,7 +24,11 @@ public class Subscription {
 	private String username;
 
 	@JsonProperty("password")
+	@JsonSerialize(using = JsonPasswordSerializer.class)
 	private String password;
+
+	@JsonProperty("postBody")
+	private String postBody;
 
 	public Subscription() {
 		// deserialization constructor
@@ -48,6 +52,22 @@ public class Subscription {
 
 	public String getEvent() {
 		return event;
+	}
+
+	public String getPostBody() {
+		return postBody;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public SubscriptionCallMethod getHttpMethod() {
+		return postBody != null && !postBody.isEmpty() ? SubscriptionCallMethod.POST : SubscriptionCallMethod.GET;
 	}
 
 }
