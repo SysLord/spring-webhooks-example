@@ -41,6 +41,23 @@ public class SubscriptionService {
 		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
 	}
 
+	@PreAuthorize("hasRole('ROLE_SUBSCRIBER')")
+	@PatchMapping(
+			path = "/subscription",
+			name = "/subscription",
+			consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<UserSubscriptions> patchSubscription(
+			@RequestBody Subscription subscription,
+			Principal principal) throws SubscriptionException {
+
+		String username = principal.getName();
+		subscriptionRepository.patch(username, subscription);
+
+		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
+	}
+
 	@Secured({ "ROLE_SUBSCRIBER" })
 	@DeleteMapping(
 			path = "/subscription/{id}",
@@ -52,9 +69,7 @@ public class SubscriptionService {
 			Principal principal) {
 
 		String username = principal.getName();
-		UserSubscriptions userSubscriptions = subscriptionRepository.getSubscriptionsForUser(username);
-
-		userSubscriptions.delete(id);
+		subscriptionRepository.delete(username, id);
 
 		return ResponseEntity.ok().body(subscriptionRepository.getSubscriptionsForUser(username));
 	}

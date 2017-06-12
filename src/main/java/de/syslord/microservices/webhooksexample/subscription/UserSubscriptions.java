@@ -36,6 +36,14 @@ public class UserSubscriptions {
 		idSubscriptions.put(subscription.getId(), subscription);
 	}
 
+	public void patch(Subscription subscription) throws SubscriptionException {
+		if (idSubscriptions.containsKey(subscription.getId())) {
+			throw new SubscriptionException("subscription does not exist");
+		}
+
+		idSubscriptions.put(subscription.getId(), subscription);
+	}
+
 	public synchronized void delete(String id) {
 		idSubscriptions.remove(id);
 	}

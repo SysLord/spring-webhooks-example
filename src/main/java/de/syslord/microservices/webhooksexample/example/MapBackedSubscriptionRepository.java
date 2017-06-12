@@ -21,7 +21,6 @@ import de.syslord.microservices.webhooksexample.utils.AsyncServiceCaller;
 @Component
 public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(MapBackedSubscriptionRepository.class);
 
 	@Autowired
@@ -32,15 +31,21 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 	@PreAuthorize("@eventSecurity.hasEventPermission(#subscription.event)")
 	@Override
 	public void add(String username, Subscription subscription) throws SubscriptionException {
-		if (!userSubscriptions.containsKey(username)) {
-			userSubscriptions.put(username, new UserSubscriptions());
-		}
+		assertSubscriptionsInitialized(username);
 
 		UserSubscriptions subscriptions = userSubscriptions.get(username);
-		subscriptions.add(subscription);
+
+		subscriptions.add(subscription.withOwner(username));
 	}
 
-	// TODO change subscription replaces it with new subscription
+	@PreAuthorize("@eventSecurity.hasEventPermission(#subscription.event)")
+	@Override
+	public void patch(String username, Subscription subscription) throws SubscriptionException {
+		assertSubscriptionsInitialized(username);
+
+		UserSubscriptions subscriptions = userSubscriptions.get(username);
+		subscriptions.patch(subscription.withOwner(username));
+	}
 
 	@Override
 	public void delete(String username, String id) {
@@ -49,6 +54,12 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 		}
 		UserSubscriptions subscriptions = userSubscriptions.get(username);
 		subscriptions.delete(id);
+	}
+
+	private void assertSubscriptionsInitialized(String username) {
+		if (!userSubscriptions.containsKey(username)) {
+			userSubscriptions.put(username, new UserSubscriptions());
+		}
 	}
 
 	@Override
@@ -63,23 +74,25 @@ public class MapBackedSubscriptionRepository implements SubscriptionRepository {
 	public void fireEvent(SubscriptionEvent subscriptionEvent) {
 		List<Subscription> callList = getSubscriptionsForEvent(subscriptionEvent.getName());
 
-		// TODO log user and event infos
+		String owners = callList.stream()
+			.map(s -> s.getOwner())
+			.distinct()
+			.collect(Collectors.joining(", "));
 
-		// Subscription is immutable, so we can pass it around
+		logger.info("fire event {}: {} calls for {}", subscriptionEvent.getName(), callList.size(), owners);
+
 		callList.stream()
-			.forEach(subscription -> {
-
+			.map(subscription -> {
 				String address = subscriptionEvent.applyPlaceholder(subscription.getRemoteAdress());
 				String body = subscriptionEvent.applyPlaceholder(subscription.getPostBody());
 
 				ServiceCall serviceCall = new ServiceCall(
-						subscription,
 						subscription.getHttpMethod(), address,
 						subscription.getUsername(), subscription.getPassword(),
 						body);
-
-				asyncServiceCaller.enqueue(serviceCall);
-			});
+				return serviceCall;
+			})
+			.forEach(serviceCall -> asyncServiceCaller.enqueue(serviceCall));
 	}
 
 	private List<Subscription> getSubscriptionsForEvent(String eventname) {

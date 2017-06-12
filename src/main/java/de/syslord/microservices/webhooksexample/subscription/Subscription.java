@@ -1,5 +1,6 @@
 package de.syslord.microservices.webhooksexample.subscription;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -30,8 +31,28 @@ public class Subscription {
 	@JsonProperty("postBody")
 	private String postBody;
 
+	@JsonIgnore
+	private String owner;
+
 	public Subscription() {
 		// deserialization constructor
+	}
+
+	public Subscription withOwner(String newOwner) {
+		Subscription subscription = new Subscription();
+		subscription.owner = newOwner;
+
+		subscription.event = event;
+		subscription.id = id;
+		subscription.remoteAddress = remoteAddress;
+		subscription.username = username;
+		subscription.password = password;
+		subscription.postBody = postBody;
+		return subscription;
+	}
+
+	public String getOwner() {
+		return owner;
 	}
 
 	public Subscription(String remoteAdress) {

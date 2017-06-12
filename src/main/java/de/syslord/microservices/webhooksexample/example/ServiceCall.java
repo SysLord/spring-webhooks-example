@@ -2,7 +2,6 @@ package de.syslord.microservices.webhooksexample.example;
 
 import org.springframework.http.HttpEntity;
 
-import de.syslord.microservices.webhooksexample.subscription.Subscription;
 import de.syslord.microservices.webhooksexample.subscription.SubscriptionCallMethod;
 import de.syslord.microservices.webhooksexample.utils.HttpEntityBuilder;
 
@@ -18,8 +17,9 @@ public class ServiceCall {
 
 	private String body;
 
-	public ServiceCall(Subscription subscription, SubscriptionCallMethod httpMethod, String address, String username,
-			String password, String body) {
+	public ServiceCall(SubscriptionCallMethod httpMethod, String address,
+			String username, String password,
+			String body) {
 		this.httpMethod = httpMethod;
 		this.address = address;
 		this.username = username;

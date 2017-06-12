@@ -6,7 +6,9 @@ public interface SubscriptionRepository {
 
 	void add(String username, Subscription subscription) throws SubscriptionException;
 
-	void delete(String username, String id) throws SubscriptionException;
+	void patch(String username, Subscription subscription) throws SubscriptionException;
+
+	void delete(String username, String id);
 
 	UserSubscriptions getSubscriptionsForUser(String username);
 

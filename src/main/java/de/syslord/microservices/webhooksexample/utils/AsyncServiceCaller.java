@@ -47,7 +47,7 @@ public class AsyncServiceCaller {
 	}
 
 	private void readQueueForever() {
-		while (true) {
+		while (!Thread.currentThread().isInterrupted()) {
 
 			try {
 				ServiceCall serviceCall = queue.take();
@@ -56,7 +56,6 @@ public class AsyncServiceCaller {
 			} catch (InterruptedException e) {
 				return;
 			}
-
 		}
 	}
 

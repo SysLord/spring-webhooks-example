@@ -13,16 +13,16 @@ import com.google.common.collect.Maps;
 @Component
 public class Events {
 
-	private static final Map<String, Supplier<SubscriptionEvent>> eventsAndExamples = Maps.newHashMap();
+	private final Map<String, Supplier<SubscriptionEvent>> eventsAndExamples = Maps.newHashMap();
 
-	public static void addEventType(String name, Supplier<SubscriptionEvent> exampleSupplier) {
+	public void addEventType(String name, Supplier<SubscriptionEvent> exampleSupplier) {
 		eventsAndExamples.put(name, exampleSupplier);
 	}
 
 	@PostFilter("@eventSecurity.hasEventPermission(filterObject.eventname)")
 	public List<EventExample> getExamples() {
 
-		List<EventExample> examples = Events.eventsAndExamples.entrySet().stream()
+		List<EventExample> examples = eventsAndExamples.entrySet().stream()
 			.map(entry -> new EventExample(entry.getKey(), entry.getValue().get()))
 			.collect(Collectors.toList());
 
